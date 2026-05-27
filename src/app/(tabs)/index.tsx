@@ -1,6 +1,5 @@
 import products from '@/assets/data/products';
-import Colors from '@/src/constants/Colors';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import ProductListItem from '@/src/components/ProductListItem';
 
 
