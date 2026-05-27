@@ -8,6 +8,18 @@
       ],
       "@assets/*": [
         "./assets/*"
+      ],
+      "@components/*": [
+        "./components/*"
+      ],
+      "@constants/*": [
+        "./constants/*"
+      ],
+      "@providers/*": [
+        "./providers/*"
+      ],
+      "@types/*": [
+        "./types/*"
       ]
     }
   },
