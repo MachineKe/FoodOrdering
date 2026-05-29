@@ -1,11 +1,11 @@
-import { View, Text, StyleSheet, Image,Pressable} from 'react-native'
-import React, { useContext } from 'react'
+import { View, Text, StyleSheet, Image,Pressable, ActivityIndicator} from 'react-native'
+import React from 'react'
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import  products  from '@assets/data/products';
 import { useState } from 'react';
 import Button from '@/src/components/Button';
 import { usecart } from '@/src/app/providers/CartProvider';
 import { PizzaSize } from '@/src/types';
+import { useProduct } from '@/src/api/products';
 
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
@@ -13,7 +13,11 @@ const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
 const productDetailScreen = () => {
 
 
-  const { id } = useLocalSearchParams();
+  const { id:idString } = useLocalSearchParams();
+  const id = parseFloat(typeof idString === 'string' ? idString : idString[0])
+
+
+  const {data: product,error,isLoading} = useProduct(id);
 
   const { addItem } = usecart();
 
@@ -22,10 +26,14 @@ const productDetailScreen = () => {
   const [selectedSize, setSelectedSize] = useState<PizzaSize>('M');
 
 
-const product = products.find((p) => p.id.toString() === id);
 
-if (!product) {
-  return <Text>Product not found</Text>;
+
+if (isLoading){
+  return <ActivityIndicator/>
+}
+
+if (error){
+  return <Text>Error: {error.message}</Text>
 }
 
 const handleAddToCart = () => {
