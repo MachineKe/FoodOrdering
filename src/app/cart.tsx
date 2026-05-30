@@ -7,11 +7,11 @@ import { usecart } from "./providers/CartProvider";
 
 export default function CartScreen() {
   const { items, total, checkout, isProcessing } = usecart();
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('254');
 
   const onCheckout = () => {
-    if (!phoneNumber) {
-      Alert.alert('Error', 'Please enter your M-PESA phone number.');
+    if (!phoneNumber || !phoneNumber.startsWith('254') || phoneNumber.length !== 12) {
+      Alert.alert('Invalid Number', 'Please enter a valid 12-digit M-PESA phone number starting with 254 (e.g., 2547XXXXXXXX).');
       return;
     }
     checkout(phoneNumber);
@@ -35,6 +35,7 @@ export default function CartScreen() {
       <TextInput
         placeholder="M-PESA Phone (e.g. 2547XXXXXXXX)"
         keyboardType="phone-pad"
+        maxLength={12}
         value={phoneNumber}
         onChangeText={setPhoneNumber}
         style={{
