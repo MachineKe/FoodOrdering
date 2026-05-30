@@ -1,19 +1,21 @@
 import { useProduct } from '@/src/api/products';
+import { defaultPizzaImage } from '@/src/components/ProductListItem';
+import RemoteImage from '@/src/components/RemoteImage';
 import Colors from '@/src/constants/Colors';
 import { PizzaSize } from '@/src/types';
 import { FontAwesome } from '@expo/vector-icons';
 import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
 
 const productDetailScreen = () => {
-  const { id:idString } = useLocalSearchParams();
+  const { id: idString } = useLocalSearchParams();
   const id = parseFloat(typeof idString === 'string' ? idString : idString[0])
 
 
-  const {data: product,error,isLoading} = useProduct(id);
+  const { data: product, error, isLoading } = useProduct(id);
 
 
 
@@ -23,13 +25,13 @@ const productDetailScreen = () => {
 
 
 
-if (isLoading){
-  return <ActivityIndicator/>
-}
+  if (isLoading) {
+    return <ActivityIndicator />
+  }
 
-if (error){
-  return <Text>Error: {error.message}</Text>
-}
+  if (error) {
+    return <Text>Error: {error.message}</Text>
+  }
 
 
 
@@ -54,7 +56,7 @@ if (error){
         )
       }} />
 
-      <Image source={{ uri: product.image }} style={styles.image} />
+      <RemoteImage path={product.image} fallback={defaultPizzaImage} style={styles.image} />
 
 
       <Text>{product.name}</Text>

@@ -1,9 +1,9 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link } from 'expo-router';
-import { Pressable } from 'react-native';
-import { Stack } from "expo-router";
-import Colors from '@/src/constants/Colors';
 import { useColorScheme } from '@/src/components/useColorScheme';
+import Colors from '@/src/constants/Colors';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Link, Stack } from 'expo-router';
+import { Pressable } from 'react-native';
+
 export default function MenuStack() {
     const colorScheme = useColorScheme();
     return (

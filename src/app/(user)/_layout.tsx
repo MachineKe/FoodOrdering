@@ -1,6 +1,7 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Redirect, Tabs } from 'expo-router';
 import React from 'react';
+import { ActivityIndicator } from 'react-native';
 
 import { useClientOnlyValue } from '@/src/components/useClientOnlyValue';
 import { useColorScheme } from '@/src/components/useColorScheme';
@@ -18,10 +19,14 @@ function TabBarIcon(props: {
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
-  const { session } = useAuth()
+  const { session, loading } = useAuth()
+
+  if (loading) {
+    return <ActivityIndicator size="large" style={{ flex: 1 }} />
+  }
 
   if (!session) {
-    return <Redirect href="/" />
+    return <Redirect href="/(auth)/sign-in" />
   }
 
   return (
@@ -54,6 +59,13 @@ export default function TabLayout() {
           title: 'Orders',
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />
     </Tabs>

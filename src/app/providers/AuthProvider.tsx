@@ -29,12 +29,12 @@ export default function AuthProvider({ children }: PropsWithChildren) {
                 setSession(data.session)
             } catch (e) {
                 console.error('Error fetching session:', e)
-            } finally {
-                setLoading(false)
             }
         }
         fetchSession();
         supabase.auth.onAuthStateChange(async (event, session) => {
+            // Lock the UI behind a loading state while we fetch the profile
+            setLoading(true);
             setSession(session)
 
             if (session) {
@@ -45,6 +45,8 @@ export default function AuthProvider({ children }: PropsWithChildren) {
                     .eq('id', session.user.id)
                     .single();
                 setProfile(profileData || null);
+            } else {
+                setProfile(null);
             }
             setLoading(false)
 
