@@ -1,7 +1,7 @@
 import CartListItem from "@/src/components/CartListItem";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import { Alert, FlatList, Platform, Text, TextInput, View } from "react-native";
+import { Alert, FlatList, Platform, Text, TextInput, KeyboardAvoidingView } from "react-native";
 import Button from "../components/Button";
 import { usecart } from "./providers/CartProvider";
 
@@ -18,7 +18,11 @@ export default function CartScreen() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      style={{ flex: 1 }}
+    >
       <FlatList
         data={items}
         renderItem={({ item }) => <CartListItem cartItem={item} />}
@@ -51,7 +55,6 @@ export default function CartScreen() {
       />
 
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-
-    </View>
+    </KeyboardAvoidingView>
   );
 }
