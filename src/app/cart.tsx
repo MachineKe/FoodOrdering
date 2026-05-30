@@ -6,7 +6,7 @@ import Button from "../components/Button";
 import { usecart } from "./providers/CartProvider";
 
 export default function CartScreen() {
-  const { items, total, checkout } = usecart();
+  const { items, total, checkout, isProcessing } = usecart();
   const [phoneNumber, setPhoneNumber] = useState('');
 
   const onCheckout = () => {
@@ -44,7 +44,11 @@ export default function CartScreen() {
         }}
       />
 
-      <Button text="Checkout" onPress={onCheckout} disabled={items.length === 0} />
+      <Button
+        text={isProcessing ? "Processing..." : "Checkout"}
+        onPress={onCheckout}
+        disabled={items.length === 0 || isProcessing}
+      />
 
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
 
