@@ -1,9 +1,10 @@
 import { useInsertOrderItems } from '@/src/api/order-items';
-import { useInsertOrder } from '@/src/api/orders';
+import { useInsertOrder, useInitiateMpesaPayment } from '@/src/api/orders';
 import { CartItem, Tables } from '@/src/types';
 import { randomUUID } from 'expo-crypto';
 import { useRouter } from 'expo-router';
 import React, { createContext, useContext } from 'react';
+import { Alert } from 'react-native';
 type Product = Tables<'products'>
 
 
@@ -13,7 +14,7 @@ type CartType = {
     addItem: (product: Product, size: CartItem['size']) => void;
     updateQuantity: (itemId: string, amount: -1 | 1) => void;
     total: number;
-    checkout: () => void;
+    checkout: (phoneNumber: string) => void;
 }
 
 
@@ -23,13 +24,14 @@ const CartContext = createContext<CartType>({
     addItem: (product: Product, size: CartItem['size']) => { },
     updateQuantity: (itemId: string, amount: -1 | 1) => { },
     total: 0,
-    checkout: () => { },
+    checkout: (phoneNumber: string) => { },
 })
 
 
 const CartProvider = ({ children }: { children: React.ReactNode }) => {
     const { mutate: insertOrder } = useInsertOrder();
     const { mutate: insertOrderItems } = useInsertOrderItems();
+    const { mutate: initiatePayment } = useInitiateMpesaPayment();
     const router = useRouter();
 
     const [items, setItems] = React.useState<CartItem[]>([])
@@ -64,16 +66,16 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
     const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
-    const checkout = () => {
+    const checkout = (phoneNumber: string) => {
         insertOrder(
             { total },
             {
-                onSuccess: saveOrderItems,
+                onSuccess: (newOrder) => saveOrderItems(newOrder, phoneNumber),
             }
         );
     };
 
-    const saveOrderItems = (newOrder: any) => {
+    const saveOrderItems = (newOrder: any, phoneNumber: string) => {
         if (!newOrder) return;
 
         insertOrderItems(
@@ -83,8 +85,20 @@ const CartProvider = ({ children }: { children: React.ReactNode }) => {
             },
             {
                 onSuccess() {
-                    setItems([]);
-                    router.push(`/(user)/orders/${newOrder.id}`);
+                    initiatePayment(
+                        { phoneNumber, amount: total, orderId: newOrder.id },
+                        {
+                            onSuccess: () => {
+                                setItems([]);
+                                Alert.alert('Payment Initiated', 'Please check your phone and enter your M-PESA PIN to complete the order.');
+                                router.push(`/(user)/orders/${newOrder.id}`);
+                            },
+                            onError: (error) => {
+                                Alert.alert('Payment Error', 'There was an issue initiating your checkout. Your items are still in the cart.');
+                                console.error(error);
+                            }
+                        }
+                    );
                 },
             }
         );

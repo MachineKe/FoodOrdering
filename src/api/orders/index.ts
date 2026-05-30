@@ -26,6 +26,34 @@ export const useMyOrders = () => {
     });
 };
 
+export const useInitiateMpesaPayment = () => {
+    return useMutation({
+        async mutationFn({ phoneNumber, amount, orderId }: { phoneNumber: string; amount: number; orderId: number }) {
+            // Note: Replace this with your computer's local IP address (e.g., http://192.168.1.100:3000) 
+            // or your Ngrok/Production URL so the emulator/device can reach the NestJS server!
+            const API_URL = 'https://foodpayment.cloud.beyondsoftwares.com/mpesa/checkout';
+
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ phoneNumber, amount, orderId }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(`M-PESA Error: ${errorData}`);
+            }
+
+            return response.json();
+        },
+        onError(error) {
+            console.error('M-PESA Error:', error);
+        },
+    });
+};
+
 export const useInsertOrderSubscription = () => {
     const queryClient = useQueryClient();
 
