@@ -31,6 +31,10 @@ export default function CartScreen() {
       <Text style={{ marginTop: 20, fontSize: 20, fontWeight: '500', padding: 10 }}>
         Total: ${total.toFixed(2)}
       </Text>
+      
+      <Text style={{ fontWeight: '600', fontSize: 16, marginHorizontal: 10, marginBottom: 5 }}>
+        Lipa Na Mpesa
+      </Text>
 
       <TextInput
         placeholder="M-PESA Phone (e.g. 2547XXXXXXXX)"
